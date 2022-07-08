@@ -1,0 +1,39 @@
+elemDistintos:
+	move $t0, $a1 #guarda o tamanho em t0
+	move $t7, $a0 #guarda o endereco em t7
+	move $t8, $a0 #guarda o endereco em t8
+	
+	li $t1,0
+	Loop1:
+		sle $t6, $t0, $t1
+		bne $t6, $zero, endloop1
+		
+		lw $t2,0($t7)
+		li $t3,0
+		Loop2:
+			beq $t3,$t0,endloop2
+			
+			lw $t4,0($t8)
+			bne $t2, $t4, Diferentes
+			addi $t5,$t5,1	# Soma 1 se iguais
+			Diferentes:
+			addi $t3,$t3,1
+			addi $t8,$t8,4
+			b Loop2
+		endloop2:
+		addi $t5,$t5,-1
+		sub $t0,$t0,$t5
+		addi $t1,$t1,1
+		addi $t7,$t7,4
+		b Loop1
+	endloop1:
+	move $v0, $t0
+	jr $ra
+
+
+
+
+
+
+
+

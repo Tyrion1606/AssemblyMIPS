@@ -1,0 +1,43 @@
+divfac:
+	li $t2, 0
+	
+	abs $t0, $a0	# DIVIDENDO
+	abs $t1, $a1	# DIVISOR
+	
+	slt $t4, $a0, $zero	# DIVIDENDO < 0?
+	slt $t5, $a1, $zero	# DIVISOR < 0?
+	xor $t6, $t4, $t5
+	
+	# Desconta o divisor do dividendo e soma 1 ao contador a cada vez até que o dividendo seja menor que o divisor
+	sll $t1, $t1, 6
+	loopq:
+		slt $t3, $t0, $t1
+		bne $t3, $zero, loopr
+		sub $t0, $t0, $t1
+		addi $t2, $t2, 64
+		
+		b loopq
+	loopr:
+		srl $t1, $t1, 6
+	loop:
+		slt $t3, $t0, $t1
+		bne $t3, $zero, end
+		sub $t0, $t0, $t1
+		addi $t2, $t2, 1
+		
+		b loop
+	
+	end:
+		# COMPLEMENTO DE 2 para ajustar os sinais
+		beq $t4, $zero, pulaa
+		not $t0, $t0
+		addi $t0, $t0, 1
+		pulaa:
+		beq $t6, $zero, pulab
+		not $t2, $t2
+		addi $t2, $t2, 1
+		pulab:
+		
+		mthi $t0
+		mtlo $t2
+		jr $ra

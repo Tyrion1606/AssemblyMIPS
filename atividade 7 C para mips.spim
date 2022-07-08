@@ -1,0 +1,28 @@
+.data
+
+.text
+main:
+
+li $v0, 5	# lê um inteiro e coloca em $v0
+syscall		# Faça
+move $t0, $v0	# Atribui o inteiro à variável "n" que será o registrador $t0
+li $t1, 0	# Atribui "0" à variável "resultado", que será o registrador $t1
+
+Loop:
+	slt $t2, $zero, $t0	# Atribui 1 a $t2 se n>0, 0 caso contrario
+	beq $t2, $zero, PrintAndExit	# Termina o programa quando n>=0
+
+	li $v0, 5	# lê um "Valor" e coloca em $v0
+	syscall		# Faça
+	add $t1,$t1,$v0	# Adiciona o "Valor" a "Resultado"
+
+	addi $t2,$t2,-1	# n--
+	j Loop		#volta para o loop
+
+PrintAndExit:
+	move $a0, $t1	# Coloca resultado no campo de impressão
+	li $v0, 1	# Imprime um inteiro armazenado em $a0
+	syscall		# Faça
+
+	li $v0, 10	# Termine o programa
+	syscall		# Faça

@@ -1,0 +1,75 @@
+.data
+
+over: .asciiz "overflow"
+QuebraDeLinha: .asciiz "\n"
+
+.text
+	main:
+		#ler int e armazenar em $t0
+		li $v0, 5
+		syscall
+		move $t0, $v0
+		#ler int e armazenar em $t1
+		li $v0, 5
+		syscall
+		move $t1, $v0
+		#ler int e armazenar em $t2
+		li $v0, 5
+		syscall
+		move $t2, $v0
+
+		beqz $t0, unsigned	# 0
+		bnez $t0, signed	# 1
+		
+		j END
+
+	unsigned:
+		nor $t3,$t1,$zero
+		sltu $t3,$t3,$t2
+		bnez $t3,overflow
+		
+		addu $t3,$t1,$t2
+		move $a0, $t3
+		li $v0, 1
+		syscall
+		
+		j END	
+	signed:
+		addu $t3,$t1,$t2	# adição ignorando o sinal armazenada em $t3
+		
+		# Se os sinais dos operandos forem diferentes, não é possivel overflow
+		xor $t4,$t1,$t2
+		slt $t4,$t4,$zero
+		bnez $t4,semoverflow
+		
+		# Há overflow se o sinal do resultado for diferente do sinal dos operandos
+		xor $t4,$t3,$t1
+		slt $t4,$t4,$zero
+		bnez $t4,overflow
+		j semoverflow
+		
+		j END
+	
+		semoverflow:
+			add $a0,$t1,$t2
+			li $v0, 1
+			syscall
+			
+			j END
+			
+	overflow:
+		la $a0, over
+		li $v0, 4
+		syscall
+		
+		j END
+	
+	
+	END:
+		la $a0, QuebraDeLinha
+		li $v0, 4
+		syscall
+		
+		li $v0, 10
+		syscall
+		

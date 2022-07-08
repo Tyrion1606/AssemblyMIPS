@@ -1,0 +1,28 @@
+.data
+
+.text
+main:
+
+beq $s0, $s1, If	# se A = B, vá para "If"
+slt $t0, $s0, $s1	# se A < B, $t0 recebe 1
+bne $t0, $zero, ElseIf	# se $t0 = 1 (ou seja: A < B), vá para "ElseIf"
+
+# caso nenhuma das condições acima sejam satisfeitas:
+sub $s2, $s0, $s1	# resultado = B - A
+j PrintAndExit		# pula para o final a fim de evitar as condicionais testadas acima
+
+If:
+	add $s2, $s0, $s1	# resultado = A + B
+	j PrintAndExit		# pula para o final para evitar a outra condicional
+
+ElseIf:
+	sub $s2, $s1, $s0	# resultado = A - B
+	j PrintAndExit		# pula para o final (não precisava, mas só pra ficar homogêneo)
+
+PrintAndExit:
+	move $a0, $s2		# Coloca resultado no campo de impressão
+	li $v0, 1		# Imprime um inteiro armazenado em $a0
+	syscall			# faça
+
+	li $v0, 10		# termine o programa
+	syscall			# faça

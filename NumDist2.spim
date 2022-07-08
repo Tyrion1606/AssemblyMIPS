@@ -1,0 +1,39 @@
+.data
+
+vetor: .word 1,1,1,1,1,2,2,2,3,3,3,3,3,3,4,4,4,4,4,5,5,5,56
+
+.text
+main:	
+	la $a0, vetor
+	li $a1, 23
+
+	jal elemDistintos
+	
+	li $v0, 10
+	syscall
+elemDistintos:
+	move $t0, $a1 #guarda o tamanho em t0
+	move $t7, $a0 #guarda o endereco em t7
+		
+	lw $t2,0($t7)
+	li $t3,0
+	Loop:
+		beq $t3,$t0,endloop
+		
+		lw $t4,0($t7)
+		bne $t2, $t4, Diferentes
+		addi $t5,$t5,1	# Soma 1 se iguais
+		addi $t3,$t3,1
+		addi $t7,$t7,4
+		b Loop
+		Diferentes:
+		move $t2,$t4
+		addi $t3,$t3,1
+		addi $t7,$t7,4
+		b Loop
+	endloop:
+	addi $t5,$t5,-1
+	sub $t0,$t0,$t5
+	
+	move $v0, $t0
+	jr $ra

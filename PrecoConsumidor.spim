@@ -1,0 +1,39 @@
+.data
+
+DoubleCem: .double 100.00
+QuebraDeLinha: .asciiz "\n"
+
+.text
+main:
+	ldc1 $f8, DoubleCem # Guarda o Valor 100 no formado double em f8
+	
+	li $v0, 7 # Ler Valor de Fábrica em f2
+	syscall
+	mov.d $f2, $f0
+	
+	li $v0, 7 # Ler Lucro em f4
+	syscall
+	mov.d $f4, $f0
+	
+	li $v0, 7 # Adicionar Impostos a f4
+	syscall
+	add.d $f4, $f4, $f0
+	
+	div.d $f4, $f4, $f8 # Coloca em Porcentagem
+	
+	mul.d $f4, $f4, $f2 # Obtem o Acrescimo total a partir da porcentagem
+	
+	add.d $f12, $f4, $f2 # Soma o acrescimo com o valor inicial
+	
+	li $v0, 3 # Print Double em f12
+	syscall
+	
+	b exit # Fim do programa
+	
+exit:
+	la $a0, QuebraDeLinha
+	li $v0, 4
+	syscall
+	
+	li $v0, 10
+	syscall

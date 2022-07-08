@@ -1,0 +1,28 @@
+.data
+
+QuebraDeLinha: .asciiz "\n"
+
+.text
+main:
+	li $v0, 7 # Ler Double	TRECHO em KM
+	syscall
+	mov.d $f2, $f0
+	
+	li $v0, 7 # Ler Double 	TEMPO em Horas
+	syscall
+	mov.d $f4, $f0
+	
+	div.d $f12,$f2,$f4 # (Velocidade = KM/Horas) em f12 como Double
+	
+	li $v0, 3 # Print Double em f12
+	syscall
+	
+	b exit # Fim do programa
+	
+exit:
+	la $a0, QuebraDeLinha
+	li $v0, 4
+	syscall
+	
+	li $v0, 10
+	syscall

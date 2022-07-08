@@ -1,0 +1,99 @@
+.data
+
+QuebraDeLinha: .asciiz "\n"
+
+.text
+main:	
+	li $v0, 5 # Ler Dividendo
+	syscall
+	move $a0, $v0
+	
+	li $v0, 5 # Ler Divisor
+	syscall
+	move $a1, $v0
+	
+	jal divfac
+	
+	li $v0, 10
+	syscall
+	
+	divfac:
+		# sinal !=
+        	xor $s0, $a0, $a1
+
+		# divdendo >
+		slt  $t5, $a0, $zero
+
+		# se é negativo
+		slt $t6, $a1, $zero
+		
+		move $t0,  $zero
+		move $t1,  $zero
+		move $t2,  $zero
+		
+		ori $t4,  $zero, 32
+
+		# $s1 = -1
+		li $s1,-1
+		 
+		bne $t5, $zero, dividendo_neg
+
+		b loop
+
+	dividendo_neg:
+		# div pra positivo
+		mul $a0, $a0, $s1
+
+		#bnez $t6, divisor_neg
+		b loop
+
+	divisor_neg:
+		mul $a1, $a1, $s1
+		b loop
+
+	loop:
+		# shift left resto
+		sll $t0, $t0, 1
+
+		# div >= 0
+		sle $t7, $zero, $a0
+		bne $t7, $zero, first
+		#bgez $a0,first
+		
+		ori $t0, $t0, 1
+
+	first:
+		# shift left
+        	sll $a0, $a0, 1
+
+		# resto - divisor
+		sub $t1, $t0, $a1
+
+		# if sub >= 0, j second
+		sle $t7, $zero, $t1
+		bne $t7, $zero, second
+		#bgez $t1, second
+
+	thrid:
+		# incremento++
+		addi $t2, $t2, 1
+		beq $t2, $t4, next
+
+		j loop
+
+	second:	# +1 no menos significativo
+		move $t0,$t1
+		ori $a0,1
+
+		j thrid
+
+	next:
+		sle $t7, $zero, $s0
+		bne $t7, $zero, last
+		#bgez $s0, last
+		mul $a0, $a0, $s1
+
+	last:
+
+		mtlo $a0
+		mthi $t0
