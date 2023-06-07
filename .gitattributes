@@ -1,2 +1,2 @@
-*.spim linguist-language=Assembly
+*.spim linguist-language=AssemblyMips
 *.spim linguist-detectable=true
